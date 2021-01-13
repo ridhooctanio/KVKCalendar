@@ -36,13 +36,17 @@ final class ViewController: UIViewController {
             style.headerScroll.isAnimateTitleDate = true
             style.headerScroll.heightHeaderWeek = 70
             style.event.isEnableVisualSelect = false
-            style.month.isHiddenTitle = true
             style.month.weekDayAligment = .center
         } else {
             style.timeline.widthEventViewer = 350
             style.headerScroll.fontNameDay = .systemFont(ofSize: 17)
         }
+        style.month.isHiddenBackgroundEvent = false
+        style.month.isHiddenDotInTitle = true
+        style.month.isHiddenMoreCount = true
         style.month.scrollDirection = .horizontal
+        style.month.colorMoreTitle = .black
+        style.month.colorMoreBackground = .orange
         style.startWeekDay = .sunday
         style.timeSystem = TimeHourSystem.current ?? .twelve
         if #available(iOS 13.0, *) {

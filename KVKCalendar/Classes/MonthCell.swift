@@ -84,9 +84,9 @@ final class MonthCell: UICollectionViewCell {
             let height = (frame.height - dateLabel.bounds.height - 5) / countInCell
             
             for (idx, event) in events.enumerated() {
-                let width = frame.width - 10
+                let width = frame.width - 5
                 let count = idx + 1
-                let label = UILabel(frame: CGRect(x: 5, y: 5 + dateLabel.bounds.height + height * CGFloat(idx), width: width, height: height))
+                let label = LabelWithPadding(frame: CGRect(x: 2.5, y: 5 + dateLabel.bounds.height + height * CGFloat(idx), width: width, height: height))
                 label.isUserInteractionEnabled = true
                 
                 if count > titlesCount {
@@ -99,13 +99,14 @@ final class MonthCell: UICollectionViewCell {
                     label.tag = event.start.day
                     label.addGestureRecognizer(tap)
                     label.textColor = monthStyle.colorMoreTitle
+                    label.backgroundColor = monthStyle.colorMoreBackground
                     
                     if !monthStyle.isHiddenMoreTitle {
                         let text: String
-                        if monthStyle.moreTitle.isEmpty {
+                        if monthStyle.moreTitle.isEmpty && !monthStyle.isHiddenMoreCount {
                             text = "\(events.count - titlesCount)"
                         } else if frame.height > 80 {
-                            text = "\(monthStyle.moreTitle) \(events.count - titlesCount)"
+                            text = monthStyle.isHiddenMoreCount ? monthStyle.moreTitle : "\(monthStyle.moreTitle) \(events.count - titlesCount)"
                         } else {
                             text = ""
                         }
@@ -136,6 +137,8 @@ final class MonthCell: UICollectionViewCell {
                         label.text = " \(event.text) "
                         label.setRoundCorners(monthStyle.eventCorners, radius: monthStyle.eventCornersRadius)
                     }
+                    
+                    label.backgroundColor = monthStyle.isHiddenBackgroundEvent ? .clear : event.color?.value ?? .clear
                     
                     let tap = UITapGestureRecognizer(target: self, action: #selector(tapOneEvent))
                     label.addGestureRecognizer(tap)

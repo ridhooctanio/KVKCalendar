@@ -223,8 +223,11 @@ public struct MonthStyle {
     public var colorWeekendDate: UIColor = .gray
     public var moreTitle: String = "more"
     public var isHiddenMoreTitle: Bool = false
+    public var isHiddenMoreCount: Bool = false
+    public var colorMoreBackground: UIColor = .clear
     public var colorMoreTitle: UIColor = .gray
     public var colorEventTitle: UIColor = .black
+    public var isHiddenBackgroundEvent: Bool = true
     public var weekFont: UIFont = .boldSystemFont(ofSize: 14)
     public var fontEventTitle: UIFont = .systemFont(ofSize: 14)
     public var fontEventTime: UIFont = .systemFont(ofSize: 10)
