@@ -224,15 +224,15 @@ public extension UICollectionView {
     }
 }
 
-@available(iOS 13.4, *)
-protocol PointerInteractionProtocol: class, UIPointerInteractionDelegate {
-    func addPointInteraction(on view: UIView, delegate: UIPointerInteractionDelegate)
-}
-
-@available(iOS 13.4, *)
-extension PointerInteractionProtocol {
-    func addPointInteraction(on view: UIView, delegate: UIPointerInteractionDelegate) {
-        let interaction = UIPointerInteraction(delegate: delegate)
-        view.addInteraction(interaction)
-    }
-}
+//@available(iOS 13.4, *)
+//protocol PointerInteractionProtocol: class, UIPointerInteractionDelegate {
+//    func addPointInteraction(on view: UIView, delegate: UIPointerInteractionDelegate)
+//}
+//
+//@available(iOS 13.4, *)
+//extension PointerInteractionProtocol {
+//    func addPointInteraction(on view: UIView, delegate: UIPointerInteractionDelegate) {
+//        let interaction = UIPointerInteraction(delegate: delegate)
+//        view.addInteraction(interaction)
+//    }
+//}

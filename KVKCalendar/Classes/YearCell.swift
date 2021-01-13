@@ -86,10 +86,6 @@ final class YearCell: UICollectionViewCell {
         super.init(frame: frame)
         titleLabel.frame = CGRect(x: 3, y: 0, width: frame.width - 6, height: topHeight)
         addSubview(titleLabel)
-        
-        if #available(iOS 13.4, *) {
-            addPointInteraction(on: self, delegate: self)
-        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -198,15 +194,15 @@ final class YearCell: UICollectionViewCell {
     }
 }
 
-@available(iOS 13.4, *)
-extension YearCell: PointerInteractionProtocol {
-    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
-        var pointerStyle: UIPointerStyle?
-        
-        if let interactionView = interaction.view {
-            let targetedPreview = UITargetedPreview(view: interactionView)
-            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
-        }
-        return pointerStyle
-    }
-}
+//@available(iOS 13.4, *)
+//extension YearCell: PointerInteractionProtocol {
+//    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+//        var pointerStyle: UIPointerStyle?
+//        
+//        if let interactionView = interaction.view {
+//            let targetedPreview = UITargetedPreview(view: interactionView)
+//            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
+//        }
+//        return pointerStyle
+//    }
+//}
