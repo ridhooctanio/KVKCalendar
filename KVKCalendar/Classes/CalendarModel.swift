@@ -109,6 +109,7 @@ public struct Event {
     public var textColor: UIColor = .white
     public var isAllDay: Bool = false
     public var isContainsFile: Bool = false
+    public var info: String = ""
     public var textForMonth: String = ""
     public var textForList: String = ""
     
@@ -413,9 +414,10 @@ protocol DisplayDelegate: class {
 // MARK: EKEvent
 
 public extension EKEvent {
-    func transform(text: String? = nil, textForMonth: String? = nil, textForList: String? = nil) -> Event {
+    func transform(text: String? = nil, info: String? = nil, textForMonth: String? = nil, textForList: String? = nil) -> Event {
         var event = Event(ID: eventIdentifier)
         event.text = text ?? title
+        event.info = info ?? ""
         event.start = startDate
         event.end = endDate
         event.color = Event.Color(UIColor(cgColor: calendar.cgColor))

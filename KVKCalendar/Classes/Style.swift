@@ -339,6 +339,7 @@ public struct AllDayStyle {
     public var height: CGFloat = 25
     public var fontTitle: UIFont = .systemFont(ofSize: 10)
     public var isPinned: Bool = true
+    public var maxCountEventShow: Int = 0 // Set 0 if you want to unlimited show event
     public var eventCorners: UIRectCorner = .allCorners
     public var eventCornersRadius: CGSize = CGSize(width: 5, height: 5)
     public var axis: AxisMode = .vertical

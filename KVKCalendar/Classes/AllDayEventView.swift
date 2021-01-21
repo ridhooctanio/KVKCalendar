@@ -38,7 +38,7 @@ final class AllDayEventView: UIView {
             eventHeight = (frame.height / CGFloat(filtered.count))
         }
         
-        filtered.enumerated().forEach { (idx, event) in
+        for (idx, event) in filtered.enumerated() {
             let x: CGFloat
             let y: CGFloat
             switch style.axis {
@@ -64,6 +64,18 @@ final class AllDayEventView: UIView {
             label.backgroundColor = event.color.withAlphaComponent(0.8)
             label.tag = event.id.hashValue
             label.setRoundCorners(style.eventCorners, radius: style.eventCornersRadius)
+            
+            if style.maxCountEventShow != 0 {
+                if idx + 1 > style.maxCountEventShow {
+                    label.text = "•••"
+                    label.textAlignment = .center
+                    label.backgroundColor = .lightGray
+                    let tap = UITapGestureRecognizer(target: self, action: #selector(tapOnEvent))
+                    label.addGestureRecognizer(tap)
+                    addSubview(label)
+                    return
+                }
+            }
             
             let tap = UITapGestureRecognizer(target: self, action: #selector(tapOnEvent))
             label.addGestureRecognizer(tap)
