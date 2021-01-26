@@ -5,7 +5,7 @@
 //  Created by Sergei Kviatkovskii on 14.12.2020.
 //
 
-import UIKit
+import Foundation
 import EventKit
 
 extension CalendarView {
@@ -134,24 +134,19 @@ extension CalendarView {
     
     private func switchTypeCalendar(type: CalendarType) {
         self.type = type
-        currentViewCache?.removeFromSuperview()
+        [dayView, weekView, monthView, yearView, listView].forEach({ $0.removeFromSuperview() })
         
         switch self.type {
         case .day:
             addSubview(dayView)
-            currentViewCache = dayView
         case .week:
             addSubview(weekView)
-            currentViewCache = weekView
         case .month:
             addSubview(monthView)
-            currentViewCache = monthView
         case .year:
             addSubview(yearView)
-            currentViewCache = yearView
         case .list:
             addSubview(listView)
-            currentViewCache = listView
             reloadData()
         }
     }
@@ -229,18 +224,19 @@ extension CalendarView: DisplayDelegate {
 extension CalendarView: CalendarSettingProtocol {
     public func reloadFrame(_ frame: CGRect) {
         self.frame = frame
-        
-        if let currentView = currentViewCache as? CalendarSettingProtocol {
-            currentView.reloadFrame(frame)
-        }
+        dayView.reloadFrame(frame)
+        weekView.reloadFrame(frame)
+        monthView.reloadFrame(frame)
+        yearView.reloadFrame(frame)
+        listView.reloadFrame(frame)
     }
     
     // MARK: in progress
     func updateStyle(_ style: Style) {
         self.style = style
-        
-        if let currentView = currentViewCache as? CalendarSettingProtocol {
-            currentView.updateStyle(style)
-        }
+        dayView.updateStyle(style)
+        weekView.updateStyle(style)
+        monthView.updateStyle(style)
+        yearView.updateStyle(style)
     }
 }
