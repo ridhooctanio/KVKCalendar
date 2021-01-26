@@ -34,6 +34,10 @@ public final class CalendarView: UIView {
         return getSystemEvents(eventStore: eventStore, calendars: systemCalendars)
     }
     
+    /// references the current visible View (to allow lazy loading of views)
+    // cannot be private unfortunately, because private only allows access to extensions that are in the same file...
+    internal lazy var currentViewCache: UIView? = nil
+    
     private(set) lazy var dayView: DayView = {
         let day = DayView(data: dayData, frame: frame, style: style)
         day.delegate = self
@@ -80,7 +84,7 @@ public final class CalendarView: UIView {
         self.calendarData = CalendarData(date: date, years: years, style: style)
         self.dayData = DayData(data: calendarData, timeSystem: style.timeSystem, startDay: style.startWeekDay)
         self.weekData = WeekData(data: calendarData, timeSystem: style.timeSystem, startDay: style.startWeekDay)
-        self.monthData = MonthData(data: calendarData, startDay: style.startWeekDay, calendar: style.calendar, scrollDirection: style.month.scrollDirection)
+        self.monthData = MonthData(parameters: .init(data: calendarData, startDay: style.startWeekDay, calendar: style.calendar, monthStyle: style.month))
         self.listData = ListViewData(data: calendarData)
         super.init(frame: frame)
         

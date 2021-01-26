@@ -233,7 +233,7 @@ public protocol EventProtocol {
 
 // MARK: - Settings protocol
 
-protocol CalendarSettingProtocol: class {
+protocol CalendarSettingProtocol: AnyObject {
     func reloadFrame(_ frame: CGRect)
     func updateStyle(_ style: Style)
     func reloadData(_ events: [Event])
@@ -250,7 +250,7 @@ extension CalendarSettingProtocol {
 
 // MARK: - Data source protocol
 
-public protocol CalendarDataSource: class {
+public protocol CalendarDataSource: AnyObject {
     /// get events to display on view
     /// also this method returns a system events from iOS calendars if you set the property `systemCalendar` in style
     func eventsForCalendar(systemEvents: [EKEvent]) -> [Event]
@@ -285,7 +285,7 @@ public extension CalendarDataSource {
 
 // MARK: - Private Display data source
 
-protocol DisplayDataSource: class {
+protocol DisplayDataSource: AnyObject {
     func willDisplayEventView(_ event: Event, frame: CGRect, date: Date?) -> EventViewGeneral?
     
     func willDisplayHeaderSubview(date: Date?, frame: CGRect, type: CalendarType) -> UIView?
@@ -321,7 +321,7 @@ extension DisplayDataSource {
 
 // MARK: - Delegate protocol
 
-public protocol CalendarDelegate: class {
+public protocol CalendarDelegate: AnyObject {
     func sizeForHeader(_ date: Date?, type: CalendarType) -> CGSize?
     
     /// size cell for (month, year, list) view
@@ -389,7 +389,7 @@ public extension CalendarDelegate {
 
 // MARK: - Private Display delegate
 
-protocol DisplayDelegate: class {
+protocol DisplayDelegate: AnyObject {
     func sizeForHeader(_ date: Date?, type: CalendarType) -> CGSize?
     
     func sizeForCell(_ date: Date?, type: CalendarType) -> CGSize?

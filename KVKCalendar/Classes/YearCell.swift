@@ -136,7 +136,7 @@ final class YearCell: UICollectionViewCell {
     }
     
     private func weekendsDays(day: Day, label: UILabel, view: UIView) {
-        guard day.type == .saturday || day.type == .sunday else {
+        guard day.type == .sunday else {
             isNowDate(date: day.date, weekend: false, label: label, view: view)
             return
         }

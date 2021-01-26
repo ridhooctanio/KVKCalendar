@@ -123,7 +123,7 @@ class DayCell: UICollectionViewCell {
     }
     
     private func populateCell(_ day: Day) {
-        guard day.type == .saturday || day.type == .sunday else {
+        guard day.type == .sunday else {
             populateDay(date: day.date, colorText: style.headerScroll.colorDate)
             titleLabel.textColor = style.headerScroll.colorDate
             backgroundColor = style.headerScroll.colorWeekdayBackground
