@@ -8,7 +8,7 @@
 import UIKit
 
 final class MonthView: UIView {
-    private var monthData: MonthData
+    private var data: MonthData
     private var style: Style
     private var collectionView: UICollectionView?
     private var eventPreview: UIView?
@@ -39,7 +39,7 @@ final class MonthView: UIView {
     }()
     
     init(data: MonthData, frame: CGRect, style: Style) {
-        self.monthData = data
+        self.data = data
         self.style = style
         super.init(frame: frame)
         setUI()
@@ -48,14 +48,14 @@ final class MonthView: UIView {
     
     func setDate(_ date: Date) {
         headerView.date = date
-        monthData.date = date
-        monthData.selectedDates.removeAll()
-        scrollToDate(date, animated: monthData.isAnimate)
+        data.date = date
+        data.selectedDates.removeAll()
+        scrollToDate(date, animated: data.isAnimate)
         collectionView?.reloadData()
     }
     
     func reloadData(_ events: [Event]) {
-        let displayableValues = monthData.reloadEventsInDays(events: events, date: monthData.date)
+        let displayableValues = data.reloadEventsInDays(events: events)
         delegate?.didDisplayCalendarEvents(displayableValues.events, dates: displayableValues.dates, type: .month)
         collectionView?.reloadData()
     }
@@ -83,30 +83,31 @@ final class MonthView: UIView {
     }
     
     private func scrollToDate(_ date: Date, animated: Bool) {
-        if let idx = monthData.data.months.firstIndex(where: { $0.date.month == date.month && $0.date.year == date.year }) {
-            scrollToIndex(idx, animated: animated)
+        if let idx = data.days.firstIndex(where: { $0.date?.month == date.month && $0.date?.year == date.year }) {
+            scrollToIndex(idx + 15, animated: animated)
         }
         
-        if !monthData.isAnimate {
-            monthData.isAnimate = true
+        if !data.isAnimate {
+            data.isAnimate = true
         }
     }
     
     private func scrollToIndex(_ idx: Int, animated: Bool) {
+        let newIndex = getIndexForDirection(style.month.scrollDirection, indexPath: IndexPath(row: idx, section: 0))
         let scrollType: UICollectionView.ScrollPosition = style.month.scrollDirection == .horizontal ? .left : .top
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            self?.collectionView?.scrollToItem(at: IndexPath(row: 0, section: idx), at: scrollType, animated: animated)
+            self?.collectionView?.scrollToItem(at: newIndex, at: scrollType, animated: animated)
         }
     }
     
     private func didSelectDates(_ dates: [Date], indexPath: IndexPath) {
-        guard let date = dates.last else {
+        guard let date = dates.first else {
             collectionView?.reloadData()
             return
         }
         
-        monthData.date = date
+        data.date = date
         headerView.date = date
         
         let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
@@ -121,11 +122,11 @@ final class MonthView: UIView {
         let cells = collectionView?.indexPathsForVisibleItems ?? []
         let days = cells.compactMap { (indexPath) -> Day in
             let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
-            return monthData.data.months[index.section].days[index.row]
+            return data.days[index.row]
         }
-        guard let newMoveDate = days.filter({ $0.date?.day == monthData.date.day }).first?.date else {
+        guard let newMoveDate = days.filter({ $0.date?.day == data.date.day }).first?.date else {
             let sorted = days.sorted(by: { ($0.date?.day ?? 0) < ($1.date?.day ?? 0) })
-            if let lastDate = sorted.last?.date, lastDate.day < monthData.date.day {
+            if let lastDate = sorted.last?.date, lastDate.day < data.date.day {
                 return lastDate
             }
             return nil
@@ -145,16 +146,17 @@ extension MonthView: CalendarSettingProtocol {
         
         collectionView?.removeFromSuperview()
         collectionView = nil
+        collectionView = createCollectionView(frame: self.frame, style: style.month)
         
         var collectionFrame = frame
         collectionFrame.origin.y = headerView.frame.height
         collectionFrame.size.height = collectionFrame.height - headerView.frame.height
-        collectionView = createCollectionView(frame: collectionFrame, style: style.month)
+        collectionView?.frame = collectionFrame
         if let tempView = collectionView {
             addSubview(tempView)
         }
         
-        if let idx = monthData.data.months.firstIndex(where: { $0.date.month == monthData.date.month && $0.date.year == monthData.date.year }) {
+        if let idx = data.days.firstIndex(where: { $0.date?.month == data.date.month && $0.date?.year == data.date.year }) {
             scrollToIndex(idx, animated: false)
         }
         collectionView?.reloadData()
@@ -164,7 +166,7 @@ extension MonthView: CalendarSettingProtocol {
         self.style = style
         headerView.updateStyle(style)
         setUI()
-        setDate(monthData.date)
+        setDate(data.date)
     }
     
     func setUI() {
@@ -172,10 +174,11 @@ extension MonthView: CalendarSettingProtocol {
         
         addSubview(headerView)
         collectionView = nil
+        collectionView = createCollectionView(frame: frame, style: style.month)
         var collectionFrame = frame
         collectionFrame.origin.y = headerView.frame.height
         collectionFrame.size.height = collectionFrame.height - headerView.frame.height
-        collectionView = createCollectionView(frame: collectionFrame, style: style.month)
+        collectionView?.frame = collectionFrame
         if let tempView = collectionView {
             addSubview(tempView)
         }
@@ -184,10 +187,10 @@ extension MonthView: CalendarSettingProtocol {
     private func getIndexForDirection(_ direction: UICollectionView.ScrollDirection, indexPath: IndexPath) -> IndexPath {
         switch direction {
         case .horizontal:
-            let a = indexPath.item / monthData.itemsInPage
-            let b = indexPath.item / monthData.rowsInPage - a * monthData.columnsInPage
-            let c = indexPath.item % monthData.rowsInPage
-            let newIdx = (c * monthData.columnsInPage + b) + a * monthData.itemsInPage
+            let a = indexPath.item / data.itemsInPage
+            let b = indexPath.item / data.rowsInPage - a * data.columnsInPage
+            let c = indexPath.item % data.rowsInPage
+            let newIdx = (c * data.columnsInPage + b) + a * data.itemsInPage
             return IndexPath(row: newIdx, section: indexPath.section)
         default:
             return indexPath
@@ -196,22 +199,18 @@ extension MonthView: CalendarSettingProtocol {
 }
 
 extension MonthView: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return monthData.data.months.count
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch style.month.scrollDirection {
         case .horizontal:
-            return monthData.rowsInPage * monthData.columns
+            return data.rowsInPage * data.columns
         default:
-            return monthData.data.months[section].days.count
+            return data.days.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
-        let day = monthData.data.months[index.section].days[index.row]
+        let day = data.days[index.row]
         
         if let cell = dataSource?.dequeueDateCell(date: day.date, type: .month, collectionView: collectionView, indexPath: index), day.type != .empty {
             return cell
@@ -220,17 +219,17 @@ extension MonthView: UICollectionViewDataSource {
                 let date = day.date ?? Date()
                 switch style.month.selectionMode {
                 case .multiple:
-                    cell.selectDate = monthData.selectedDates.contains(date) ? date : monthData.date
+                    cell.selectDate = data.selectedDates.contains(date) ? date : data.date
                 case .single:
-                    cell.selectDate = monthData.date
+                    cell.selectDate = data.date
                 }
                 cell.style = style
                 cell.day = day
                 cell.events = day.events
                 cell.delegate = self
-                cell.isHidden = index.row > monthData.daysCount
+                cell.isHidden = index.row > data.days.count
                 if let date = day.date {
-                    cell.isSelected = monthData.selectedDates.contains(date)
+                    cell.isSelected = data.selectedDates.contains(date)
                 } else {
                     cell.isSelected = false
                 }
@@ -241,47 +240,38 @@ extension MonthView: UICollectionViewDataSource {
 
 extension MonthView: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if monthData.isFirstLoad {
-            monthData.isFirstLoad = false
+        if data.isFirstLoad {
+            data.isFirstLoad = false
             return
         }
         
-        guard let newMoveDate = getVisibleDate(), monthData.willSelectDate.month != newMoveDate.month, monthData.date != newMoveDate else {
+        guard let newMoveDate = getVisibleDate(), data.willSelectDate.month != newMoveDate.month, data.date != newMoveDate else {
             return
         }
         
-        monthData.willSelectDate = newMoveDate
+        data.willSelectDate = newMoveDate
         willSelectDate?(newMoveDate)
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let visibleIndex: Int
-        switch style.month.scrollDirection {
-        case .vertical:
-            visibleIndex = Int(targetContentOffset.pointee.y / scrollView.bounds.height)
-        case .horizontal:
-            visibleIndex = Int(targetContentOffset.pointee.x / scrollView.bounds.width)
-        @unknown default:
-            fatalError()
-        }
-
-        let newDate = monthData.data.months[visibleIndex].date
-        headerView.date = newDate
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard let newMoveDate = getVisibleDate() else { return }
+        
+        headerView.date = newMoveDate
         guard style.month.isAutoSelectDateScrolling else { return }
         
-        monthData.date = newDate
-        delegate?.didSelectCalendarDates([newDate], type: .month, frame: nil)
+        data.date = newMoveDate
+        delegate?.didSelectCalendarDates([newMoveDate], type: .month, frame: nil)
         collectionView?.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
-        let date = monthData.data.months[index.section].days[index.row].date ?? monthData.date
+        let date = data.days[index.row].date ?? data.date
         
         switch style.month.selectionMode {
         case .multiple:
-            monthData.selectedDates = monthData.updateSelectedDates(monthData.selectedDates, date: date, calendar: style.calendar)
-            didSelectDates(monthData.selectedDates.compactMap({ $0 }), indexPath: index)
+            data.selectedDates = data.updateSelectedDates(data.selectedDates, date: date, calendar: style.calendar)
+            didSelectDates(data.selectedDates.compactMap({ $0 }), indexPath: index)
         case .single:
             didSelectDates([date], indexPath: index)
         }
@@ -289,7 +279,7 @@ extension MonthView: UICollectionViewDelegate, UICollectionViewDelegateFlowLayou
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
-        let date = monthData.data.months[index.section].days[index.row].date
+        let date = data.days[index.row].date
         
         if let size = delegate?.sizeForCell(date, type: .month) {
             return size
@@ -339,13 +329,13 @@ extension MonthView: MonthCellDelegate {
     func didStartMoveEvent(_ event: EventViewGeneral, snapshot: UIView?, gesture: UILongPressGestureRecognizer) {
         let point = gesture.location(in: collectionView)
         
-        monthData.movingEvent = event
+        data.movingEvent = event
         eventPreview = nil
         eventPreview = snapshot
-        monthData.eventPreviewXOffset = (snapshot?.bounds.width ?? monthData.eventPreviewXOffset) / 2
-        eventPreview?.frame.origin = CGPoint(x: point.x - monthData.eventPreviewXOffset, y: point.y - monthData.eventPreviewYOffset)
+        data.eventPreviewXOffset = (snapshot?.bounds.width ?? data.eventPreviewXOffset) / 2
+        eventPreview?.frame.origin = CGPoint(x: point.x - data.eventPreviewXOffset, y: point.y - data.eventPreviewYOffset)
         eventPreview?.alpha = 0.9
-        eventPreview?.tag = monthData.tagEventPagePreview
+        eventPreview?.tag = data.tagEventPagePreview
         eventPreview?.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         guard let eventTemp = eventPreview else { return }
         
@@ -362,11 +352,11 @@ extension MonthView: MonthCellDelegate {
         eventPreview = nil
         
         let point = gesture.location(in: collectionView)
-        guard let indexPath = collectionView?.indexPathForItem(at: point), let event = monthData.movingEvent?.event else { return }
+        guard let indexPath = collectionView?.indexPathForItem(at: point), let event = data.movingEvent?.event else { return }
         
-        monthData.movingEvent = nil
+        data.movingEvent = nil
         let index = getIndexForDirection(style.month.scrollDirection, indexPath: indexPath)
-        let day = monthData.data.months[index.section].days[index.row]
+        let day = data.days[index.row]
         let newDate = day.date ?? event.start
 
         var startComponents = DateComponents()
@@ -407,6 +397,6 @@ extension MonthView: MonthCellDelegate {
             collectionView?.setContentOffset(offset, animated: false)
         }
         
-        eventPreview?.frame.origin = CGPoint(x: point.x - monthData.eventPreviewXOffset, y: point.y - monthData.eventPreviewYOffset)
+        eventPreview?.frame.origin = CGPoint(x: point.x - data.eventPreviewXOffset, y: point.y - data.eventPreviewYOffset)
     }
 }
