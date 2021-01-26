@@ -42,7 +42,7 @@ final class ViewController: UIViewController {
             style.timeline.widthEventViewer = 350
             style.headerScroll.fontNameDay = .systemFont(ofSize: 17)
         }
-        style.month.scrollDirection = .horizontal
+        style.month.scrollDirection = .vertical
         style.startWeekDay = .sunday
         style.timeSystem = TimeHourSystem.current ?? .twelve
         style.month.isPagingEnabled = false
