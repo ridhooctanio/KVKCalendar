@@ -56,9 +56,9 @@ final class EventView: EventViewGeneral {
         textView.isHidden = textView.frame.width < 20
         addSubview(textView)
         
-//        if #available(iOS 13.4, *) {
-//            addPointInteraction(on: self, delegate: self)
-//        }
+        if #available(iOS 13.4, *) {
+            addPointInteraction(on: self, delegate: self)
+        }
     }
     
     override func tapOnEvent(gesture: UITapGestureRecognizer) {
@@ -94,15 +94,15 @@ final class EventView: EventViewGeneral {
     }
 }
 
-//@available(iOS 13.4, *)
-//extension EventView: PointerInteractionProtocol {
-//    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
-//        var pointerStyle: UIPointerStyle?
-//        
-//        if let interactionView = interaction.view {
-//            let targetedPreview = UITargetedPreview(view: interactionView)
-//            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
-//        }
-//        return pointerStyle
-//    }
-//}
+@available(iOS 13.4, *)
+extension EventView: PointerInteractionProtocol {
+    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        var pointerStyle: UIPointerStyle?
+        
+        if let interactionView = interaction.view {
+            let targetedPreview = UITargetedPreview(view: interactionView)
+            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
+        }
+        return pointerStyle
+    }
+}

@@ -81,10 +81,12 @@ final class TimelineView: UIView, EventDateProtocol {
         scrollView.frame = scrollFrame
         addSubview(scrollView)
         
-        // long tap to create a new event preview
-        let longTap = UILongPressGestureRecognizer(target: self, action: #selector(addNewEvent))
-        longTap.minimumPressDuration = style.timeline.minimumPressDuration
-        addGestureRecognizer(longTap)
+        if style.timeline.isEnabledCreateNewEvent {
+            // long tap to create a new event preview
+            let longTap = UILongPressGestureRecognizer(target: self, action: #selector(addNewEvent))
+            longTap.minimumPressDuration = style.timeline.minimumPressDuration
+            addGestureRecognizer(longTap)
+        }
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(forceDeselectEvent))
         addGestureRecognizer(tap)
@@ -331,7 +333,7 @@ final class TimelineView: UIView, EventDateProtocol {
                 // create event
                 var newFrame = CGRect(x: 0, y: 0, width: 0, height: heightPage)
                 sortedEventsByDate.forEach { (event) in
-                    times.forEach({ (time) in                        
+                    times.forEach({ (time) in
                         // calculate position 'y'
                         if event.start.hour.hashValue == time.valueHash, event.start.day == date?.day {
                             if time.tag == midnight, let newTime = times.first(where: { $0.tag == 0 }) {

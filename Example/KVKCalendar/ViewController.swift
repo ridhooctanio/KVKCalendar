@@ -42,10 +42,8 @@ final class ViewController: UIViewController {
             style.timeline.widthEventViewer = 350
             style.headerScroll.fontNameDay = .systemFont(ofSize: 17)
         }
-        style.month.scrollDirection = .vertical
-        style.startWeekDay = .sunday
+        style.month.scrollDirection = .horizontal
         style.timeSystem = TimeHourSystem.current ?? .twelve
-        style.month.isPagingEnabled = false
         if #available(iOS 13.0, *) {
             style.event.iconFile = UIImage(systemName: "paperclip")
         }
@@ -180,6 +178,8 @@ extension ViewController: CalendarDelegate {
         newEvent.end = end
         newEvent.ID = "\(events.count + 1)"
         newEvent.text = "\(startTime) - \(endTime)\n new event"
+        newEvent.textForList = "\(startTime) - \(endTime)\n new time"
+        newEvent.textForMonth = "\(startTime) - \(endTime)\n new time"
         events.append(newEvent)
         calendarView.reloadData()
     }

@@ -230,9 +230,9 @@ final class MonthCell: UICollectionViewCell {
         dateLabel.frame = dateFrame
         addSubview(dateLabel)
         
-//        if #available(iOS 13.4, *) {
-//            addPointInteraction(on: self, delegate: self)
-//        }
+        if #available(iOS 13.4, *) {
+            addPointInteraction(on: self, delegate: self)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -398,18 +398,18 @@ extension MonthCell: UIGestureRecognizerDelegate {
     }
 }
 
-//@available(iOS 13.4, *)
-//extension MonthCell: PointerInteractionProtocol {
-//    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
-//        var pointerStyle: UIPointerStyle?
-//        
-//        if let interactionView = interaction.view {
-//            let targetedPreview = UITargetedPreview(view: interactionView)
-//            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
-//        }
-//        return pointerStyle
-//    }
-//}
+@available(iOS 13.4, *)
+extension MonthCell: PointerInteractionProtocol {
+    func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
+        var pointerStyle: UIPointerStyle?
+        
+        if let interactionView = interaction.view {
+            let targetedPreview = UITargetedPreview(view: interactionView)
+            pointerStyle = UIPointerStyle(effect: .hover(targetedPreview))
+        }
+        return pointerStyle
+    }
+}
 
 protocol MonthCellDelegate: AnyObject {
     func didSelectEvent(_ event: Event, frame: CGRect?)
