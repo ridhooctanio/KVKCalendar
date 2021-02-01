@@ -224,6 +224,10 @@ extension CalendarView: DisplayDelegate {
         newFrame.origin = .zero
         delegate?.eventViewerFrame(newFrame)
     }
+    
+    func didMonthChange(_ date: Date) {
+        delegate?.didMonthChange(date)
+    }
 }
 
 extension CalendarView: CalendarSettingProtocol {

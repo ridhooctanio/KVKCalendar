@@ -20,6 +20,8 @@ final class WeekHeaderView: UIView {
         return label
     }()
     
+    weak var delegate: CalendarDelegate?
+    
     var date: Date? {
         didSet {
             setDateToTitle(date: date, style: style)
@@ -101,6 +103,8 @@ final class WeekHeaderView: UIView {
             } else {
                 titleLabel.textColor = style.month.colorTitleDate
             }
+            
+            delegate?.didMonthChange(date)
         }
     }
 }

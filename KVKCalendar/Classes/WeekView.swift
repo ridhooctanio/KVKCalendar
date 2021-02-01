@@ -46,6 +46,7 @@ final class WeekView: UIView {
                 self.timelinePages.addNewTimelineView(newTimeline, to: .begin)
             }
         }
+        view.delegate = self
         return view
     }()
     
@@ -312,5 +313,11 @@ extension WeekView: TimelineDelegate {
         let endDate = style.calendar.date(from: endComponents)
         
         delegate?.didChangeCalendarEvent(event, start: startDate, end: endDate)
+    }
+}
+
+extension WeekView: CalendarDelegate {
+    func didMonthChange(_ date: Date) {
+        delegate?.didMonthChange(date)
     }
 }

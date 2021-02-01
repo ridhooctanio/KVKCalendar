@@ -183,6 +183,10 @@ extension ViewController: CalendarDelegate {
         events.append(newEvent)
         calendarView.reloadData()
     }
+    
+    func didMonthChange(_ date: Date) {
+        print("new date", date)
+    }
 }
 
 extension ViewController: CalendarDataSource {

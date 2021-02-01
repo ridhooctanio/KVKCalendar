@@ -27,6 +27,7 @@ final class MonthView: UIView {
         }
         let view = WeekHeaderView(frame: CGRect(x: 0, y: 0, width: frame.width, height: height), style: style)
         view.backgroundColor = style.week.colorBackground
+        view.delegate = self
         return view
     }()
     
@@ -424,5 +425,11 @@ extension MonthView: MonthCellDelegate {
         }
         
         eventPreview?.frame.origin = CGPoint(x: point.x - monthData.eventPreviewXOffset, y: point.y - monthData.eventPreviewYOffset)
+    }
+}
+
+extension MonthView: CalendarDelegate {
+    func didMonthChange(_ date: Date) {
+        delegate?.didMonthChange(date)
     }
 }

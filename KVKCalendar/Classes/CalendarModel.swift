@@ -357,6 +357,8 @@ public protocol CalendarDelegate: AnyObject {
     
     /// deselect event on timeline
     func deselectEvent(_ event: Event, animated: Bool)
+    
+    func didMonthChange(_ date: Date)
 }
 
 public extension CalendarDelegate {
@@ -385,6 +387,8 @@ public extension CalendarDelegate {
     func willSelectDate(_ date: Date, type: CalendarType) {}
     
     func deselectEvent(_ event: Event, animated: Bool) {}
+    
+    func didMonthChange(_ date: Date) {}
 }
 
 // MARK: - Private Display delegate
@@ -409,6 +413,8 @@ protocol DisplayDelegate: AnyObject {
     func didAddCalendarEvent(_ event: Event, _ date: Date?)
     
     func deselectCalendarEvent(_ event: Event)
+    
+    func didMonthChange(_ date: Date)
 }
 
 // MARK: EKEvent

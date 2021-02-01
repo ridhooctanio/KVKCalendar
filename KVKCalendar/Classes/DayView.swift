@@ -45,6 +45,7 @@ final class DayView: UIView {
                 self.timelinePages.addNewTimelineView(newTimeline, to: .begin)
             }
         }
+        view.delegate = self
         return view
     }()
     
@@ -322,5 +323,11 @@ extension DayView: CalendarSettingProtocol {
             topBackgroundView.addSubview(scrollHeaderDay)
         }
         addSubview(timelinePages)
+    }
+}
+
+extension DayView: CalendarDelegate {
+    func didMonthChange(_ date: Date) {
+        delegate?.didMonthChange(date)
     }
 }

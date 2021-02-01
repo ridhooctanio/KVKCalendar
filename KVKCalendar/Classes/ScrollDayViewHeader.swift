@@ -25,6 +25,7 @@ final class ScrollDayHeaderView: UIView {
     private var subviewCustomHeader: UIView?
     
     weak var dataSource: DisplayDataSource?
+    weak var delegate: CalendarDelegate?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -163,6 +164,8 @@ final class ScrollDayHeaderView: UIView {
     private func setDateToTitle(_ date: Date?) {
         if let date = date, !style.headerScroll.isHiddenSubview {
             titleLabel.text = date.titleForLocale(style.locale, formatter: style.headerScroll.titleFormatter)
+            
+            delegate?.didMonthChange(date)
         }
     }
     
