@@ -319,6 +319,7 @@ final class MonthCell: UICollectionViewCell {
                 label.backgroundColor = monthStyle.colorBackgroundSelectDate
                 label.layer.cornerRadius = label.frame.height / 2
                 label.clipsToBounds = true
+                view.layer.borderColor = weekend ? monthStyle.colorBorderWeekendDate.cgColor : monthStyle.colorBorderDate.cgColor
             }
             return
         }
